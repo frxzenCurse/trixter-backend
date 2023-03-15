@@ -1,9 +1,9 @@
 package com.practice.trixter.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.practice.trixter.dto.ChatDto;
-import com.practice.trixter.dto.LoginFormDto;
+import com.practice.trixter.dto.RegisterFormDto;
 import com.practice.trixter.dto.UserDto;
+import com.practice.trixter.exceptions.BadRegisterRequestException;
 import com.practice.trixter.exceptions.UserNotFoundException;
 import com.practice.trixter.model.Chat;
 import com.practice.trixter.model.FilesInfo;
@@ -13,10 +13,7 @@ import com.practice.trixter.repo.UserRepo;
 import com.practice.trixter.util.FileManager;
 import com.practice.trixter.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,7 +32,28 @@ import java.util.List;
 public class UserService implements UserDetailsService {
 
     private final UserRepo userRepo;
+    private final ChatRepo chatRepo;
     private final BCryptPasswordEncoder passwordEncoder;
+
+    public UserDto register(RegisterFormDto form) {
+        User user = userRepo.findByUsername(form.getUsername()).orElse(null);
+
+        if (user != null) {
+            throw new BadRegisterRequestException("Пользователь с никнеймом " + form.getUsername() + " уже существует");
+        }
+
+        Chat general = chatRepo.findByName("general").orElse(null);
+        User newUser = User.builder()
+                .username(form.getUsername())
+                .password(form.getPassword())
+                .chatsIds(List.of(general.getId()))
+                .build();
+        newUser = save(newUser);
+        general.addMember(newUser);
+        chatRepo.save(general);
+
+        return convertToDto(newUser);
+    }
 
     public UserDto getUserWithChats(String authToken) {
         User user = getUserByToken(authToken);
@@ -75,10 +93,6 @@ public class UserService implements UserDetailsService {
         User user = getUserByToken(authToken);
 
         try {
-            if (user.getAvatar() != null) {
-                FileManager.delete(user.getAvatar().getName());
-            }
-
             String fileUrl = FileManager.upload(file, user.getUsername());
             FilesInfo filesInfo = FilesInfo.builder()
                     .name(user.getUsername() + FileManager.getExtension(file.getOriginalFilename()))
@@ -90,7 +104,7 @@ public class UserService implements UserDetailsService {
             update(user);
             return convertToDto(user);
         } catch (Exception e) {
-            log.info("DELETE ?");
+            log.info("DELETE - {}", e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }

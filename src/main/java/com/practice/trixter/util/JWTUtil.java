@@ -18,7 +18,7 @@ public class JWTUtil {
     public static String createAccessToken(User user, String issuer) {
         return JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000))
                 .withIssuer(issuer)
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
@@ -27,7 +27,7 @@ public class JWTUtil {
     public static String createAccessToken(com.practice.trixter.model.User user, String issuer) {
         return JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10  * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 15 * 60 * 1000))
                 .withIssuer(issuer)
                 .withClaim("roles", List.of("ROLE_USER"))
                 .sign(algorithm);

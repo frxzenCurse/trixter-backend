@@ -1,7 +1,5 @@
 package com.practice.trixter.filter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.trixter.util.JWTUtil;
 import jakarta.servlet.FilterChain;
@@ -13,15 +11,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -59,11 +54,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         Cookie jwtRefreshCookie = new Cookie("jwt_refresh", refresh_token);
         jwtRefreshCookie.setMaxAge(60 * 60);
         jwtRefreshCookie.setHttpOnly(true);
-        jwtRefreshCookie.setPath("/api/token/refresh");
+        jwtRefreshCookie.setPath("/api/token/");
 
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", access_token);
-//        tokens.put("refresh_token", refresh_token);
 
         response.setContentType(APPLICATION_JSON_VALUE);
         response.addCookie(jwtRefreshCookie);

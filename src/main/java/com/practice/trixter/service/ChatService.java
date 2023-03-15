@@ -30,6 +30,12 @@ public class ChatService {
         return chatRepo.save(chat);
     }
 
+    public ChatDto update(Chat chat) {
+        chat = chatRepo.save(chat);
+
+        return convertToDto(chat);
+    }
+
     public ChatDto save(Chat chat) {
         chat = chatRepo.insert(chat);
 

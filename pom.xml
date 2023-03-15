@@ -44,7 +44,8 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-<!--		<dependency>-->
+
+		<!--		<dependency>-->
 <!--			<groupId>org.springframework</groupId>-->
 <!--			<artifactId>spring-messaging</artifactId>-->
 <!--			<version>${spring.version}</version>-->

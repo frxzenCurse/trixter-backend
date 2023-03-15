@@ -21,4 +21,7 @@ public class Chat {
     public void addMessage(Message message) {
         messages.add(message);
     }
+    public void addMember(User user) {
+        membersId.add(user.getId());
+    }
 }

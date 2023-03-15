@@ -2,3 +2,6 @@ spring:
   data:
     mongodb:
       database: trixter
+  servlet:
+      multipart:
+          max-file-size: 5242880

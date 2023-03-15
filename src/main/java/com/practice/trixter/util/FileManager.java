@@ -23,8 +23,21 @@ public class FileManager {
     public static String upload(MultipartFile file, String filename) throws IOException {
         String extension = getExtension(file.getOriginalFilename());
         Path path = Paths.get(DIRECTORY_PATH, filename+extension);
-        Path newFile = Files.createFile(path);
         InputStream data = file.getInputStream();
+
+        if (Files.exists(path)) {
+            try (FileOutputStream stream = new FileOutputStream(path.toString())) {
+                byte[] bytes = data.readAllBytes();
+                stream.write(bytes);
+            } catch (Exception e) {
+                log.info("UPLOAD EXCEPTION - {}", e.getMessage());
+            }
+
+            data.close();
+            return path.toString();
+        }
+
+        Path newFile = Files.createFile(path);
 
         try (FileOutputStream stream = new FileOutputStream(newFile.toString())) {
             byte[] bytes = data.readAllBytes();
@@ -32,7 +45,7 @@ public class FileManager {
         } catch (Exception e) {
             log.info("UPLOAD EXCEPTION - {}", e.getMessage());
         }
-        log.info("UPLOAD PATH - {}", newFile);
+
         data.close();
         return newFile.toString();
     }

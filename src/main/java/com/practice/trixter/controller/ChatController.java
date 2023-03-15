@@ -47,6 +47,14 @@ public class ChatController {
         return ResponseEntity.ok(chatService.getChat(chatId, authToken));
     }
 
+    @PostMapping("api/chat/update")
+    public ResponseEntity<ChatDto> updateChat(@RequestBody Chat chat) {
+        return ResponseEntity.ok(chatService.update(chat));
+    }
+
+//    @PostMapping("api/chat/delete/user")
+//    public ResponseEntity<ChatDto> deleteUserFromChat(@RequestBody )
+
     @PostMapping("/api/chat/")
     public ResponseEntity<ChatDto> addChat(@RequestBody Chat chat) {
         return ResponseEntity.ok(chatService.save(chat));
