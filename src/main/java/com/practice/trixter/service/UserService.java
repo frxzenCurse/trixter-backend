@@ -3,6 +3,7 @@ package com.practice.trixter.service;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.practice.trixter.dto.RegisterFormDto;
 import com.practice.trixter.dto.UserDto;
+import com.practice.trixter.enums.Buckets;
 import com.practice.trixter.exceptions.BadRegisterRequestException;
 import com.practice.trixter.exceptions.UserNotFoundException;
 import com.practice.trixter.model.Chat;
@@ -10,7 +11,6 @@ import com.practice.trixter.model.FilesInfo;
 import com.practice.trixter.model.User;
 import com.practice.trixter.repo.ChatRepo;
 import com.practice.trixter.repo.UserRepo;
-import com.practice.trixter.util.FileManager;
 import com.practice.trixter.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +34,7 @@ public class UserService implements UserDetailsService {
     private final UserRepo userRepo;
     private final ChatRepo chatRepo;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final BlobStorageService storageService;
 
     public UserDto register(RegisterFormDto form) {
         User user = userRepo.findByUsername(form.getUsername()).orElse(null);
@@ -46,25 +47,25 @@ public class UserService implements UserDetailsService {
         User newUser = User.builder()
                 .username(form.getUsername())
                 .password(form.getPassword())
-                .chatsIds(List.of(general.getId()))
+                .chats(List.of(general))
                 .build();
         newUser = save(newUser);
         general.addMember(newUser);
         chatRepo.save(general);
 
-        return convertToDto(newUser);
+        return newUser.convertToDto();
     }
 
-    public UserDto getUserWithChats(String authToken) {
+    public UserDto getUser(String authToken) {
         User user = getUserByToken(authToken);
 
-        return convertToDto(user);
+        return user.convertToDto();
     }
 
     public User save(User user) {
         String password = passwordEncoder.encode(user.getPassword());
-        log.info("ENCODED PASSWORD - {}", password);
         user.setPassword(password);
+
         return userRepo.insert(user);
     }
 
@@ -93,16 +94,11 @@ public class UserService implements UserDetailsService {
         User user = getUserByToken(authToken);
 
         try {
-            String fileUrl = FileManager.upload(file, user.getUsername());
-            FilesInfo filesInfo = FilesInfo.builder()
-                    .name(user.getUsername() + FileManager.getExtension(file.getOriginalFilename()))
-                    .size(file.getSize())
-                    .url(fileUrl)
-                    .build();
+            FilesInfo filesInfo = storageService.uploadFile(Buckets.AVATARS.getBucketName(), file);
             user.setAvatar(filesInfo);
 
             update(user);
-            return convertToDto(user);
+            return user.convertToDto();
         } catch (Exception e) {
             log.info("DELETE - {}", e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -117,22 +113,6 @@ public class UserService implements UserDetailsService {
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
-    }
-
-    public UserDto convertToDto(User user) {
-
-        UserDto userDto = UserDto.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .status(user.getStatus())
-                .chatsId(user.getChatsIds())
-                .build();
-
-        if (user.getAvatar() != null) {
-            userDto.setAvatarUrl(user.getAvatar().getName());
-        }
-
-        return userDto;
     }
 
     public User getUserByToken(String authToken) {

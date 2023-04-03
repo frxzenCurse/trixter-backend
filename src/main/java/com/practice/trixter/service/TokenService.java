@@ -31,7 +31,7 @@ public class TokenService {
             return;
         }
 
-        Optional<String> cookiesValue = Arrays.stream(request.getCookies())
+        Optional<String> cookiesValue = Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals("jwt_refresh"))
                 .map(Cookie::getValue)
                 .findAny();
@@ -71,7 +71,7 @@ public class TokenService {
             return;
         }
 
-        Cookie tokenCookie = Arrays.stream(request.getCookies())
+        Cookie tokenCookie = Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals("jwt_refresh"))
                 .findAny()
                 .orElse(null);

@@ -1,8 +1,6 @@
 package com.practice.trixter.dto;
 
-import com.practice.trixter.model.Message;
 import lombok.*;
-import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ChatDto {
-    @Id
     private String id;
     private String name;
+    private String type;
+    private UserDto owner;
+    private List<UserDto> administration = new ArrayList<>();
     private List<UserDto> members = new ArrayList<>();
-    private List<Message> messages = new ArrayList<>();
+    private List<MessageDto> messages = new ArrayList<>();
 }

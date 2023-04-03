@@ -1,6 +1,5 @@
 package com.practice.trixter.dto;
 
-import com.practice.trixter.model.Chat;
 import lombok.*;
 
 import java.util.List;
@@ -15,5 +14,5 @@ public class UserDto {
     private String username;
     private String status;
     private String avatarUrl;
-    private List<String> chatsId;
+    private List<String> chatsIds;
 }

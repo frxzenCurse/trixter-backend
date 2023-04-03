@@ -25,24 +25,24 @@ public class TrixterApplication {
 //		return args -> {
 //			Chat chat = new Chat();
 //			chat.setName("general");
-//			chat = chatRepo.insert(chat);
+//			chatRepo.insert(chat);
 //
-//			User user1 = User.builder()
-//					.username("user1")
-//					.password("123")
-//					.chatsIds(List.of(chat.getId()))
-//					.build();
-//			user1 = userService.save(user1);
-//			User user2 = User.builder()
-//					.username("user2")
-//					.password("123")
-//					.chatsIds(List.of(chat.getId()))
-//					.build();
-//			user2 = userService.save(user2);
-//
-//			List<String> users = List.of(user1.getId(), user2.getId());
-//			chat.setMembersId(users);
-//			chatRepo.save(chat);
+////			User user1 = User.builder()
+////					.username("user1")
+////					.password("123")
+////					.chatsIds(List.of(chat.getId()))
+////					.build();
+////			user1 = userService.save(user1);
+////			User user2 = User.builder()
+////					.username("user2")
+////					.password("123")
+////					.chatsIds(List.of(chat.getId()))
+////					.build();
+////			user2 = userService.save(user2);
+////
+////			List<String> users = List.of(user1.getId(), user2.getId());
+////			chat.setMembersId(users);
+////			chatRepo.save(chat);
 //
 //		};
 //	}

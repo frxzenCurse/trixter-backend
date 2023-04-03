@@ -5,7 +5,6 @@ import com.practice.trixter.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +20,7 @@ public class UserController {
 
     @GetMapping("/")
     public ResponseEntity<UserDto> getUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String authToken) {
-        return ResponseEntity.ok(userService.getUserWithChats(authToken));
+        return ResponseEntity.ok(userService.getUser(authToken));
     }
 
     @PostMapping("/update")
